@@ -4,9 +4,10 @@
   "package": "net.fabricmc.fidelity.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "DebugStickItemMixin",
+    "HorseBaseEntityMixin"
   ],
   "client": [
-    "FidelityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
