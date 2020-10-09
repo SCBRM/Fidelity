@@ -4,6 +4,7 @@
   "package": "net.fabricmc.fidelity.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AbstractDonkeyEntityMixin",
     "DebugStickItemMixin",
     "HorseBaseEntityMixin"
   ],
