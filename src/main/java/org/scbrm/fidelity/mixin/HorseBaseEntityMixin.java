@@ -1,5 +1,7 @@
 package org.scbrm.fidelity.mixin;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.ServerConfigHandler;
 import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import org.scbrm.fidelity.entity.ai.goal.ObeyMasterGoal;
 import net.minecraft.entity.EntityType;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @Mixin(HorseBaseEntity.class)
 public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHorseBaseEntity {
 
-	private static final TrackedData<Optional<UUID>> MASTER_UUID;
+	private static final TrackedData<Optional<UUID>> MASTER_UUID = DataTracker.registerData(HorseBaseEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 	private State state = State.ROAMING_FREE;
 
 	/*@Shadow protected abstract void spawnPlayerReactionParticles(boolean positive);*/
@@ -70,7 +72,29 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 		this.state = state;
 	}
 
-	static {
-		MASTER_UUID = DataTracker.registerData(HorseBaseEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+	@Inject(at = @At("TAIL"), method = "writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V")
+	public void _writeCustomDataToTag(CompoundTag tag, CallbackInfo info) {
+		if (this.getMasterUuid() != null) {
+			tag.putUuid("Master", this.getMasterUuid());
+		}
+
+		tag.putByte("FidelityState", (byte)this.state.ordinal());
 	}
+
+	@Inject(at = @At("TAIL"), method = "readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V")
+	public void _readCustomDataFromTag(CompoundTag tag, CallbackInfo info) {
+		final UUID uuid = tag.containsUuid("Master") ?
+				tag.getUuid("Master") :
+				ServerConfigHandler.getPlayerUuidByName(this.getServer(), tag.getString("Master"));
+
+		if (uuid != null) {
+			try {
+				this.setMasterUuid(uuid);
+				this.state = State.values()[tag.getByte("FidelityState")];
+			} catch (Throwable e) {
+				this.state = State.ROAMING_FREE;
+			}
+		}
+	}
+
 }
