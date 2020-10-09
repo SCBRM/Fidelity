@@ -2,7 +2,7 @@ name: Build CI
 on: [push, pull_request]
 jobs:
   build:
-    name: Java ${{ matrix.java }} test build
+    name: Java ${{ matrix.java }} test build (on ${{ matrix.os }})
     strategy:
       matrix:
         os: [ ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, windows-2016, windows-2019, macos-10.15 ]
