@@ -32,8 +32,8 @@ public abstract class DebugStickItemMixin extends Item {
             if(equine.isAlive() && equine.isTame() && !user.world.isClient) {
                 final IHorseBaseEntity iequine = (IHorseBaseEntity)equine;
                 if(iequine.getState() == IHorseBaseEntity.State.ROAMING_FREE) {
-                    iequine.setMasterUuid(user.getUuid());
-                } else if(iequine.getMasterUuid() != user.getUuid()) {
+                    iequine.setMaster(user);
+                } else if(iequine.getMaster() != user) {
                     user.sendSystemMessage(new LiteralText("You do not own this animal"), Util.NIL_UUID);
                     return ActionResult.FAIL;
                 }

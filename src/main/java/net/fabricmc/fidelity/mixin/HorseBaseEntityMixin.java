@@ -1,18 +1,19 @@
 package net.fabricmc.fidelity.mixin;
 
 import net.fabricmc.fidelity.bridge.IHorseBaseEntity;
-import net.fabricmc.fidelity.entity.ai.goal.FollowMasterGoal;
+import net.fabricmc.fidelity.entity.ai.goal.ObeyMasterGoal;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,7 +35,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 
 	@Inject(at = @At("HEAD"), method = "initGoals()V")
 	private void _initGoals(CallbackInfo info) {
-		this.goalSelector.add(0, new FollowMasterGoal((HorseBaseEntity)(AnimalEntity)this));
+		this.goalSelector.add(0, new ObeyMasterGoal((HorseBaseEntity)(AnimalEntity)this));
 	}
 
 	@Inject(at = @At("TAIL"), method = "initDataTracker()V")
@@ -49,6 +50,16 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 
 	public void setMasterUuid(@Nullable UUID uuid) {
 		this.dataTracker.set(MASTER_UUID, Optional.ofNullable(uuid));
+	}
+
+	@Nullable
+	public LivingEntity getMaster() {
+		try {
+			UUID uUID = this.getMasterUuid();
+			return uUID == null ? null : this.world.getPlayerByUuid(uUID);
+		} catch (IllegalArgumentException var2) {
+			return null;
+		}
 	}
 
 	@NotNull

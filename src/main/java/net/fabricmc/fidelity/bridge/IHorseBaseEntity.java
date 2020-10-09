@@ -1,5 +1,7 @@
 package net.fabricmc.fidelity.bridge;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +35,14 @@ public interface IHorseBaseEntity {
     @Nullable
     UUID getMasterUuid();
     void setMasterUuid(@Nullable UUID uuid);
+
+    @Nullable
+    LivingEntity getMaster();
+    default void setMaster(@NotNull PlayerEntity player) { this.setMasterUuid(player.getUuid()); }
+
+    default boolean isMaster(LivingEntity entity) {
+        return entity == this.getMaster();
+    }
 
     @NotNull
     State getState();
