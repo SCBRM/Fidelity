@@ -1,4 +1,4 @@
-package net.fabricmc.fidelity.bridge;
+package org.scbrm.fidelity.bridge;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

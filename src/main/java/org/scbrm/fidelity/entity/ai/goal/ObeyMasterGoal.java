@@ -1,6 +1,6 @@
-package net.fabricmc.fidelity.entity.ai.goal;
+package org.scbrm.fidelity.entity.ai.goal;
 
-import net.fabricmc.fidelity.bridge.IHorseBaseEntity;
+import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
@@ -39,7 +39,7 @@ public class ObeyMasterGoal extends Goal {
     public boolean canStart() {
         if(!equine.isTame())
             return false;
-        final LivingEntity master = ((IHorseBaseEntity)equine).getMaster();;
+        final LivingEntity master = ((IHorseBaseEntity)equine).getMaster();
         if(master == null)
             return false;
         return isStateRelevant().orElse(this.equine.squaredDistanceTo(master) < (double)(minDistance * minDistance));

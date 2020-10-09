@@ -1,6 +1,6 @@
-package net.fabricmc.fidelity.mixin;
+package org.scbrm.fidelity.mixin;
 
-import net.fabricmc.fidelity.bridge.IHorseBaseEntity;
+import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,4 +1,4 @@
-package net.fabricmc.fidelity.mixin;
+package org.scbrm.fidelity.mixin;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;

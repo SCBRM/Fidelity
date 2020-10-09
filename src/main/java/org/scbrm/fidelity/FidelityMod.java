@@ -1,4 +1,4 @@
-package net.fabricmc.fidelity;
+package org.scbrm.fidelity;
 
 import net.fabricmc.api.ModInitializer;
 

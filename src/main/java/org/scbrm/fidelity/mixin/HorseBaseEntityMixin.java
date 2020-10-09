@@ -1,7 +1,7 @@
-package net.fabricmc.fidelity.mixin;
+package org.scbrm.fidelity.mixin;
 
-import net.fabricmc.fidelity.bridge.IHorseBaseEntity;
-import net.fabricmc.fidelity.entity.ai.goal.ObeyMasterGoal;
+import org.scbrm.fidelity.bridge.IHorseBaseEntity;
+import org.scbrm.fidelity.entity.ai.goal.ObeyMasterGoal;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
