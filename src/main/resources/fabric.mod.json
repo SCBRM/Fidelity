@@ -6,7 +6,8 @@
   "name": "Fidelity",
   "description": "Dog/Cat-like controls for horses, donkeys, and mules",
   "authors": [
-    "AeroStun"
+    "AeroStun",
+    "KeleanaAS"
   ],
   "contact": {
     "sources": "https://github.com/SCBRM/Fidelity"

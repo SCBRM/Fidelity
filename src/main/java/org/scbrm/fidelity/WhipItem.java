@@ -1,28 +1,34 @@
-package org.scbrm.fidelity.mixin;
+package org.scbrm.fidelity;
 
-import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DebugStickItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Util;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.world.World;
+import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 
 import java.util.Random;
 
-@Mixin(DebugStickItem.class)
-public abstract class DebugStickItemMixin extends Item {
+public class WhipItem extends Item {
     private static final Random random = new Random();
 
-    public DebugStickItemMixin(Item.Settings item$Settings_1) {
-        super(item$Settings_1);
+    public WhipItem(Settings settings) {
+        super(settings);
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
+        playerEntity.playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1.0F, 1.0F);
+        return new TypedActionResult<>(ActionResult.SUCCESS, playerEntity.getStackInHand(hand));
     }
 
     @Override
@@ -62,4 +68,5 @@ public abstract class DebugStickItemMixin extends Item {
         }
 
     }
+
 }
