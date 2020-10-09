@@ -9,7 +9,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +34,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 
 	@Inject(at = @At("HEAD"), method = "initGoals()V")
 	private void _initGoals(CallbackInfo info) {
-		this.goalSelector.add(0, new ObeyMasterGoal((HorseBaseEntity)(AnimalEntity)this));
+		this.goalSelector.add(0, new ObeyMasterGoal((HorseBaseEntity)(AnimalEntity)this, 1.0F,10.0F, 5.0F));
 	}
 
 	@Inject(at = @At("TAIL"), method = "initDataTracker()V")
