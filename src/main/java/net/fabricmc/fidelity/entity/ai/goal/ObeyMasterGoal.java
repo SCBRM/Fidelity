@@ -19,14 +19,14 @@ public class ObeyMasterGoal extends Goal {
     private final HorseBaseEntity equine;
     private LivingEntity master;
     private final WorldView world;
-    private final float speed;
+    private final double speed;
     private final EntityNavigation navigation;
     private int updateCountdownTicks;
     private final float maxDistance;
     private final float minDistance;
     private float oldWaterPathfindingPenalty;
 
-    public ObeyMasterGoal(HorseBaseEntity equine, float speed, float minDistance, float maxDistance) {
+    public ObeyMasterGoal(HorseBaseEntity equine, double speed, float minDistance, float maxDistance) {
         this.equine = equine;
         this.world = equine.world;
         this.speed = speed;

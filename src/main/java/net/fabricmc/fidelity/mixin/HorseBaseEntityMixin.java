@@ -34,7 +34,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 
 	@Inject(at = @At("HEAD"), method = "initGoals()V")
 	private void _initGoals(CallbackInfo info) {
-		this.goalSelector.add(0, new ObeyMasterGoal((HorseBaseEntity)(AnimalEntity)this, 1.0F,10.0F, 5.0F));
+		this.goalSelector.add(0, new ObeyMasterGoal((HorseBaseEntity)(AnimalEntity)this, 1.2D,10.0F, 5.0F));
 	}
 
 	@Inject(at = @At("TAIL"), method = "initDataTracker()V")
