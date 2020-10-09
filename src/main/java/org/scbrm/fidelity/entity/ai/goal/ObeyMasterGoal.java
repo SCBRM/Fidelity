@@ -42,7 +42,7 @@ public class ObeyMasterGoal extends Goal {
         final LivingEntity master = ((IHorseBaseEntity)equine).getMaster();
         if(master == null)
             return false;
-        return isStateRelevant().orElse(this.equine.squaredDistanceTo(master) < (double)(minDistance * minDistance));
+        return isStateRelevant().orElse(this.equine.squaredDistanceTo(master) >= (double)(minDistance * minDistance));
     }
 
     @Override
