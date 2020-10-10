@@ -1,7 +1,9 @@
 package org.scbrm.fidelity.mixin;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.ServerConfigHandler;
+import net.minecraft.text.LiteralText;
 import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import org.scbrm.fidelity.entity.ai.goal.ObeyMasterGoal;
 import net.minecraft.entity.EntityType;
@@ -21,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static net.minecraft.util.Util.NIL_UUID;
 
 @Mixin(HorseBaseEntity.class)
 public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHorseBaseEntity {
@@ -94,6 +98,15 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 			} catch (Throwable e) {
 				this.state = State.ROAMING_FREE;
 			}
+		}
+	}
+
+	@Inject(at = @At("HEAD"), method = "putPlayerOnBack(Lnet/minecraft/entity/player/PlayerEntity;)V", cancellable = true)
+	void preventTheft(PlayerEntity player, CallbackInfo info){
+		if(!this.isMaster(player)) {
+			if(!player.world.isClient)
+				player.sendSystemMessage(new LiteralText("You do not own this animal"), NIL_UUID);
+			info.cancel();
 		}
 	}
 

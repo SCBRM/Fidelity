@@ -41,7 +41,7 @@ public class WhipItem extends Item {
                     iequine.setMaster(user);
                 } else if(iequine.getMaster() != user) {
                     user.sendSystemMessage(new LiteralText("You do not own this animal"), Util.NIL_UUID);
-                    return ActionResult.FAIL;
+                    return ActionResult.success(user.world.isClient);
                 }
 
                 final IHorseBaseEntity.State state = iequine.getState().next();
