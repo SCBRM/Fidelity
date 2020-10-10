@@ -1,8 +1,6 @@
 package org.scbrm.fidelity.entity.ai.goal;
 
 import org.scbrm.fidelity.bridge.IHorseBaseEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
@@ -11,7 +9,6 @@ import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -85,14 +82,16 @@ public class ObeyMasterGoal extends Goal {
     }
 
     private void tryTeleport() {
-        final BlockPos blockPos = this.master.getBlockPos();
+        BlockPos blockPos = new BlockPos(this.master);
 
         for(int i = 0; i < 10; ++i) {
             int j = this.getRandomInt(-3, 3);
             int k = this.getRandomInt(-1, 1);
             int l = this.getRandomInt(-3, 3);
-            if (this.tryTeleportTo(blockPos.getX() + j, blockPos.getY() + k, blockPos.getZ() + l))
+            boolean bl = this.tryTeleportTo(blockPos.getX() + j, blockPos.getY() + k, blockPos.getZ() + l);
+            if (bl) {
                 return;
+            }
         }
 
     }
@@ -103,24 +102,19 @@ public class ObeyMasterGoal extends Goal {
         } else if (!this.canTeleportTo(new BlockPos(x, y, z))) {
             return false;
         } else {
-            this.equine.refreshPositionAndAngles((double)x + 0.5D, (double)y, (double)z + 0.5D, this.equine.yaw, this.equine.pitch);
+            this.equine.refreshPositionAndAngles((double)((float)x + 0.5F), (double)y, (double)((float)z + 0.5F), this.equine.yaw, this.equine.pitch);
             this.navigation.stop();
             return true;
         }
     }
 
-    private boolean canTeleportTo(@NotNull BlockPos pos) {
-        final PathNodeType pathNodeType = LandPathNodeMaker.getLandNodeType(this.world, pos.mutableCopy());
+    private boolean canTeleportTo(BlockPos pos) {
+        PathNodeType pathNodeType = LandPathNodeMaker.getPathNodeType(this.world, pos.getX(), pos.getY(), pos.getZ());
         if (pathNodeType != PathNodeType.WALKABLE) {
             return false;
         } else {
-            final BlockState blockState = this.world.getBlockState(pos.down());
-            if (blockState.getBlock() instanceof LeavesBlock) {
-                return false;
-            } else {
-                final BlockPos blockPos = pos.subtract(this.equine.getBlockPos());
-                return this.world.isSpaceEmpty(this.equine, this.equine.getBoundingBox().offset(blockPos));
-            }
+            final BlockPos blockPos = pos.subtract(new BlockPos(this.equine));
+            return this.world.doesNotCollide(this.equine, this.equine.getBoundingBox().offset(blockPos));
         }
     }
 

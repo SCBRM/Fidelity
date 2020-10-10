@@ -24,8 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Optional;
 import java.util.UUID;
 
-import static net.minecraft.util.Util.NIL_UUID;
-
 @Mixin(HorseBaseEntity.class)
 public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHorseBaseEntity {
 
@@ -89,7 +87,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 	public void _readCustomDataFromTag(CompoundTag tag, CallbackInfo info) {
 		final UUID uuid = tag.containsUuid("Master") ?
 				tag.getUuid("Master") :
-				ServerConfigHandler.getPlayerUuidByName(this.getServer(), tag.getString("Master"));
+				UUID.fromString(ServerConfigHandler.getPlayerUuidByName(this.getServer(), tag.getString("Master")));
 
 		if (uuid != null) {
 			try {
@@ -105,7 +103,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 	void preventTheft(PlayerEntity player, CallbackInfo info){
 		if(!this.isMaster(player)) {
 			if(!player.world.isClient)
-				player.sendSystemMessage(new LiteralText("You do not own this animal"), NIL_UUID);
+				player.sendMessage(new LiteralText("You do not own this animal"));
 			info.cancel();
 		}
 	}

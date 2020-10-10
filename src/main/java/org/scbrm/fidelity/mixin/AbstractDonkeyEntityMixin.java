@@ -23,7 +23,7 @@ public abstract class AbstractDonkeyEntityMixin extends HorseBaseEntity {
 
 
     @Inject(
-            method = "interactMob(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;",
+            method = "interactMob(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Z",
             slice = @Slice(
                     from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/AbstractDonkeyEntity;isBreedingItem(Lnet/minecraft/item/ItemStack;)Z"),
                     to = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/AbstractDonkeyEntity;hasChest()Z")
@@ -35,9 +35,8 @@ public abstract class AbstractDonkeyEntityMixin extends HorseBaseEntity {
             locals = LocalCapture.CAPTURE_FAILEXCEPTION,
             cancellable = true
     )
-    public void interactMobFix(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> ci, ItemStack itemStack) {
-        final ActionResult actionResult = itemStack.useOnEntity(player, this, hand);
-        if (actionResult.isAccepted())
-            ci.setReturnValue(actionResult);
+    public void interactMobFix(PlayerEntity player, Hand hand, CallbackInfoReturnable<Boolean> ci, ItemStack itemStack) {
+        if (itemStack.useOnEntity(player, this, hand))
+            ci.setReturnValue(true);
     }
 }

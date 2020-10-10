@@ -12,7 +12,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 
@@ -32,7 +31,7 @@ public class WhipItem extends Item {
     }
 
     @Override
-    public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
+    public boolean useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
         if(entity instanceof HorseBaseEntity) {
             final HorseBaseEntity equine = (HorseBaseEntity)entity;
             if(equine.isAlive() && equine.isTame() && !user.world.isClient) {
@@ -40,21 +39,21 @@ public class WhipItem extends Item {
                 if(iequine.getState() == IHorseBaseEntity.State.ROAMING_FREE) {
                     iequine.setMaster(user);
                 } else if(iequine.getMaster() != user) {
-                    user.sendSystemMessage(new LiteralText("You do not own this animal"), Util.NIL_UUID);
-                    return ActionResult.success(user.world.isClient);
+                    user.sendMessage(new LiteralText("You do not own this animal"));
+                    return true;
                 }
 
                 final IHorseBaseEntity.State state = iequine.getState().next();
                 iequine.setState(state);
                 if(state == IHorseBaseEntity.State.ROAMING_FREE)
                     iequine.setMasterUuid(null);
-                user.sendSystemMessage(new LiteralText("Animal set to " + state.toString()), Util.NIL_UUID);
+                user.sendMessage(new LiteralText("Animal set to " + state.toString()));
             } else if(equine.isAlive() && !equine.isTame() && user.world.isClient) {
                 spawnParticles(entity, false);
             }
-            return ActionResult.success(user.world.isClient);
+            return true;
         }
-        return ActionResult.PASS;
+        return true;
     }
 
     private void spawnParticles(LivingEntity entity, boolean positive) {
