@@ -103,7 +103,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 
 	@Inject(at = @At("HEAD"), method = "putPlayerOnBack(Lnet/minecraft/entity/player/PlayerEntity;)V", cancellable = true)
 	void preventTheft(PlayerEntity player, CallbackInfo info){
-		if(!this.isMaster(player)) {
+		if(this.state.hasMaster() && !this.isMaster(player)) {
 			if(!player.world.isClient)
 				player.sendSystemMessage(new LiteralText("You do not own this animal"), NIL_UUID);
 			info.cancel();
