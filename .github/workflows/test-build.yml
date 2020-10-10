@@ -17,4 +17,4 @@ jobs:
       - name: Build mod
         run: gradle build
       - name: Package mod
-        run: gradle jar
+        run: gradle remapJar
