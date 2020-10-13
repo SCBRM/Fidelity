@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -40,7 +40,7 @@ public class WhipItem extends Item {
                 if(iequine.getState() == IHorseBaseEntity.State.ROAMING_FREE) {
                     iequine.setMaster(user);
                 } else if(iequine.getMaster() != user) {
-                    user.sendSystemMessage(new LiteralText("You do not own this animal"), Util.NIL_UUID);
+                    user.sendSystemMessage(new TranslatableText("fidelity.text.not_own_animal"), Util.NIL_UUID);
                     return ActionResult.success(user.world.isClient);
                 }
 
@@ -48,7 +48,7 @@ public class WhipItem extends Item {
                 iequine.setState(state);
                 if(state == IHorseBaseEntity.State.ROAMING_FREE)
                     iequine.setMasterUuid(null);
-                user.sendSystemMessage(new LiteralText("Animal set to " + state.toString()), Util.NIL_UUID);
+                user.sendSystemMessage(new TranslatableText("fidelity.text.setstate." + state.toString()), Util.NIL_UUID);
             } else if(equine.isAlive() && !equine.isTame() && user.world.isClient) {
                 spawnParticles(entity, false);
             }
