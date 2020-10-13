@@ -1,5 +1,6 @@
 package org.scbrm.fidelity.entity.ai.goal;
 
+import net.minecraft.block.BlockState;
 import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -8,14 +9,14 @@ import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.CollisionView;
 
 import java.util.Optional;
 
 public class ObeyMasterGoal extends Goal {
     private final HorseBaseEntity equine;
     private LivingEntity master;
-    private final WorldView world;
+    private final CollisionView world;
     private final double speed;
     private final EntityNavigation navigation;
     private int updateCountdownTicks;
@@ -97,25 +98,20 @@ public class ObeyMasterGoal extends Goal {
     }
 
     private boolean tryTeleportTo(int x, int y, int z) {
-        if (Math.abs((double)x - this.master.getX()) < 2.0D && Math.abs((double)z - this.master.getZ()) < 2.0D) {
+        if (Math.abs((double)x - this.master.x) < 2.0D && Math.abs((double)z - this.master.z) < 2.0D) {
             return false;
         } else if (!this.canTeleportTo(new BlockPos(x, y, z))) {
             return false;
         } else {
-            this.equine.refreshPositionAndAngles((double)((float)x + 0.5F), (double)y, (double)((float)z + 0.5F), this.equine.yaw, this.equine.pitch);
+            this.equine.refreshPositionAndAngles((double)((float)x + 0.5F), (double)y + 1, (double)((float)z + 0.5F), this.equine.yaw, this.equine.pitch);
             this.navigation.stop();
             return true;
         }
     }
 
     private boolean canTeleportTo(BlockPos pos) {
-        PathNodeType pathNodeType = LandPathNodeMaker.getPathNodeType(this.world, pos.getX(), pos.getY(), pos.getZ());
-        if (pathNodeType != PathNodeType.WALKABLE) {
-            return false;
-        } else {
-            final BlockPos blockPos = pos.subtract(new BlockPos(this.equine));
-            return this.world.doesNotCollide(this.equine, this.equine.getBoundingBox().offset(blockPos));
-        }
+        final BlockState blockState = this.world.getBlockState(pos);
+        return blockState.allowsSpawning(this.world, pos, this.equine.getType()) && this.world.isAir(pos.up()) && this.world.isAir(pos.up(2));
     }
 
     private Optional<Boolean> isStateRelevant() {

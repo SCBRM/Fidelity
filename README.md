@@ -13,6 +13,7 @@ Current available options are:
 
 V1.0.0-rc2:
 - Full French (France) translation
+
 V1.0.0-rc1:
 - Initial release
 - 1.16.3 and 1.15.2 support

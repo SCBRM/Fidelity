@@ -47,4 +47,6 @@ public interface IHorseBaseEntity {
     @NotNull
     State getState();
     void setState(@NotNull State state);
+
+    void spawnPlayerReactionParticles(boolean positive);
 }

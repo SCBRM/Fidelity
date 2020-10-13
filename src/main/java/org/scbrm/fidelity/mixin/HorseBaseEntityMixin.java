@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,7 +31,8 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 	private static final TrackedData<Optional<UUID>> MASTER_UUID = DataTracker.registerData(HorseBaseEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 	private State state = State.ROAMING_FREE;
 
-	/*@Shadow protected abstract void spawnPlayerReactionParticles(boolean positive);*/
+	@Shadow
+	public abstract void spawnPlayerReactionParticles(boolean positive);
 
 	protected HorseBaseEntityMixin(EntityType<? extends HorseBaseEntity> entityType, World world) {
 		super(entityType, world);
@@ -77,7 +79,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 	@Inject(at = @At("TAIL"), method = "writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V")
 	public void _writeCustomDataToTag(CompoundTag tag, CallbackInfo info) {
 		if (this.getMasterUuid() != null) {
-			tag.putUuid("Master", this.getMasterUuid());
+			tag.putString("MasterUUID", this.getMasterUuid().toString());
 		}
 
 		tag.putByte("FidelityState", (byte)this.state.ordinal());
@@ -85,18 +87,14 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 
 	@Inject(at = @At("TAIL"), method = "readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V")
 	public void _readCustomDataFromTag(CompoundTag tag, CallbackInfo info) {
-		final UUID uuid = tag.containsUuid("Master") ?
-				tag.getUuid("Master") :
-				UUID.fromString(ServerConfigHandler.getPlayerUuidByName(this.getServer(), tag.getString("Master")));
+		final String uuidStr = tag.contains("MasterUUID", 8) ?
+				tag.getString("MasterUUID") :
+				ServerConfigHandler.getPlayerUuidByName(this.getServer(), tag.getString("Master"));
 
-		if (uuid != null) {
-			try {
-				this.setMasterUuid(uuid);
-				this.state = State.values()[tag.getByte("FidelityState")];
-			} catch (Throwable e) {
-				this.state = State.ROAMING_FREE;
-			}
-		}
+		if (!uuidStr.isEmpty())
+			this.setMasterUuid(UUID.fromString(uuidStr));
+
+		this.state = tag.contains("FidelityState") ? State.values()[tag.getByte("FidelityState")] : State.ROAMING_FREE;
 	}
 
 	@Inject(at = @At("HEAD"), method = "putPlayerOnBack(Lnet/minecraft/entity/player/PlayerEntity;)V", cancellable = true)
