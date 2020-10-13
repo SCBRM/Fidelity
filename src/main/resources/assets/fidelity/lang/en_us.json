@@ -1,3 +1,8 @@
 {
-  "item.fidelity.whip_item": "Whip"
+  "item.fidelity.whip_item": "Whip",
+  "fidelity.text.not_own_animal": "You do not own this animal",
+  "fidelity.text.setstate.ROAMING_FREE": "The animal is set free",
+  "fidelity.text.setstate.ROAMING": "The animal is now yours, and will roam around",
+  "fidelity.text.setstate.FOLLOWING": "The animal follows you",
+  "fidelity.text.setstate.STANDING": "The animal stands right where it is"
 }

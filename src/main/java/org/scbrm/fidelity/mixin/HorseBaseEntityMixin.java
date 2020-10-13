@@ -3,7 +3,7 @@ package org.scbrm.fidelity.mixin;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.ServerConfigHandler;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import org.scbrm.fidelity.bridge.IHorseBaseEntity;
 import org.scbrm.fidelity.entity.ai.goal.ObeyMasterGoal;
 import net.minecraft.entity.EntityType;
@@ -103,7 +103,7 @@ public abstract class HorseBaseEntityMixin extends AnimalEntity implements IHors
 	void preventTheft(PlayerEntity player, CallbackInfo info){
 		if(this.state.hasMaster() && !this.isMaster(player)) {
 			if(!player.world.isClient)
-				player.sendMessage(new LiteralText("You do not own this animal"));
+				player.sendMessage(new TranslatableText("fidelity.text.not_own_animal"));
 			info.cancel();
 		}
 	}

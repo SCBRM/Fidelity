@@ -1,3 +1,8 @@
 {
-  "item.fidelity.whip_item": "Cravache"
+  "item.fidelity.whip_item": "Cravache",
+  "fidelity.text.not_own_animal": "Cet animal ne vous appartient pas",
+  "fidelity.text.setstate.ROAMING_FREE": "L'animal est désormais libre",
+  "fidelity.text.setstate.ROAMING": "L'animal est vôtre, et va paître",
+  "fidelity.text.setstate.FOLLOWING": "L'animal vous suis",
+  "fidelity.text.setstate.STANDING": "L'animal est désormais immobile"
 }
