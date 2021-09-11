@@ -14,7 +14,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Util;
 import net.minecraft.world.World;
-import org.scbrm.fidelity.bridge.IHorseBaseEntity;
+import org.scbrm.fidelity.bridge.IRidableEntity;
 
 import java.util.Random;
 
@@ -33,23 +33,21 @@ public class WhipItem extends Item {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
-        if(entity instanceof HorseBaseEntity) {
-            final HorseBaseEntity equine = (HorseBaseEntity)entity;
-            if(equine.isAlive() && equine.isTame() && !user.world.isClient) {
-                final IHorseBaseEntity iequine = (IHorseBaseEntity)equine;
-                if(iequine.getState() == IHorseBaseEntity.State.ROAMING_FREE) {
-                    iequine.setMaster(user);
-                } else if(iequine.getMaster() != user) {
+        if(entity instanceof final IRidableEntity ridable) {
+            if(entity.isAlive() && ridable.isTame() && !user.world.isClient) {
+                if(ridable.getState() == IRidableEntity.State.ROAMING_FREE) {
+                    ridable.setMaster(user);
+                } else if(ridable.getMaster() != user) {
                     user.sendSystemMessage(new TranslatableText("fidelity.text.not_own_animal"), Util.NIL_UUID);
                     return ActionResult.success(user.world.isClient);
                 }
 
-                final IHorseBaseEntity.State state = iequine.getState().next();
-                iequine.setState(state);
-                if(state == IHorseBaseEntity.State.ROAMING_FREE)
-                    iequine.setMasterUuid(null);
-                user.sendSystemMessage(new TranslatableText("fidelity.text.setstate." + state.toString()), Util.NIL_UUID);
-            } else if(equine.isAlive() && !equine.isTame() && user.world.isClient) {
+                final IRidableEntity.State state = ridable.getState().next();
+                ridable.setState(state);
+                if(state == IRidableEntity.State.ROAMING_FREE)
+                    ridable.setMasterUuid(null);
+                user.sendSystemMessage(new TranslatableText("fidelity.text.setstate." + state), Util.NIL_UUID);
+            } else if(entity.isAlive() && !ridable.isTame() && user.world.isClient) {
                 spawnParticles(entity, false);
             }
             return ActionResult.success(user.world.isClient);

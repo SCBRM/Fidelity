@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public interface IHorseBaseEntity {
+public interface IRidableEntity {
     enum State {
         ROAMING_FREE,
         ROAMING,
@@ -47,4 +47,6 @@ public interface IHorseBaseEntity {
     @NotNull
     State getState();
     void setState(@NotNull State state);
+
+    boolean isTame();
 }

@@ -5,7 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "AbstractDonkeyEntityMixin",
-    "HorseBaseEntityMixin"
+    "HorseBaseEntityMixin",
+    "HorseEntityMixin",
+    "RidableEntityMixin",
+    "StriderEntityMixin"
   ],
   "client": [
   ],

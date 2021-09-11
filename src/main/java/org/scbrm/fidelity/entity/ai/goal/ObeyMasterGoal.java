@@ -1,6 +1,8 @@
 package org.scbrm.fidelity.entity.ai.goal;
 
-import org.scbrm.fidelity.bridge.IHorseBaseEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.HorseBaseEntity;
+import org.scbrm.fidelity.bridge.IRidableEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
@@ -8,7 +10,6 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
 import net.minecraft.entity.ai.pathing.PathNodeType;
-import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class ObeyMasterGoal extends Goal {
-    private final HorseBaseEntity equine;
+    private final MobEntity entity;
     private LivingEntity master;
     private final WorldView world;
     private final double speed;
@@ -26,55 +27,55 @@ public class ObeyMasterGoal extends Goal {
     private final float minDistance;
     private float oldWaterPathfindingPenalty;
 
-    public ObeyMasterGoal(HorseBaseEntity equine, double speed, float minDistance, float maxDistance) {
-        this.equine = equine;
-        this.world = equine.world;
+    public ObeyMasterGoal(MobEntity entity, double speed, float minDistance, float maxDistance) {
+        this.entity = entity;
+        this.world = entity.world;
         this.speed = speed;
-        this.navigation = equine.getNavigation();
+        this.navigation = entity.getNavigation();
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
     }
 
     @Override
     public boolean canStart() {
-        if(!equine.isTame())
+        if(entity instanceof HorseBaseEntity && !((HorseBaseEntity)entity).isTame())
             return false;
-        final LivingEntity master = ((IHorseBaseEntity)equine).getMaster();
+        final LivingEntity master = ((IRidableEntity) entity).getMaster();
         if(master == null)
             return false;
-        return isStateRelevant().orElse(this.equine.squaredDistanceTo(master) >= (double)(minDistance * minDistance));
+        return isStateRelevant().orElse(this.entity.squaredDistanceTo(master) >= (double)(minDistance * minDistance));
     }
 
     @Override
     public boolean shouldContinue() {
-        return isStateRelevant().orElse(this.equine.squaredDistanceTo(this.master) > (double)(maxDistance * maxDistance));
+        return isStateRelevant().orElse(this.entity.squaredDistanceTo(this.master) > (double)(maxDistance * maxDistance));
     }
 
     @Override
     public void start() {
-        this.master = ((IHorseBaseEntity)equine).getMaster();
+        this.master = ((IRidableEntity) entity).getMaster();
         this.updateCountdownTicks = 0;
-        this.oldWaterPathfindingPenalty = this.equine.getPathfindingPenalty(PathNodeType.WATER);
-        this.equine.setPathfindingPenalty(PathNodeType.WATER, 0.0F);
+        this.oldWaterPathfindingPenalty = this.entity.getPathfindingPenalty(PathNodeType.WATER);
+        this.entity.setPathfindingPenalty(PathNodeType.WATER, 0.0F);
     }
 
     public void stop() {
         this.master = null;
         this.navigation.stop();
-        this.equine.setPathfindingPenalty(PathNodeType.WATER, this.oldWaterPathfindingPenalty);
+        this.entity.setPathfindingPenalty(PathNodeType.WATER, this.oldWaterPathfindingPenalty);
     }
 
     @Override
     public void tick() {
-        if(((IHorseBaseEntity)equine).getState() == IHorseBaseEntity.State.STANDING) {
+        if(((IRidableEntity) entity).getState() == IRidableEntity.State.STANDING) {
             this.navigation.stop();
             return;
         }
-        this.equine.getLookControl().lookAt(this.master, 10.0F, (float)this.equine.getLookPitchSpeed());
+        this.entity.getLookControl().lookAt(this.master, 10.0F, (float)this.entity.getLookPitchSpeed());
         if (--this.updateCountdownTicks <= 0) {
             this.updateCountdownTicks = 10;
-            if (!this.equine.isLeashed() && !this.equine.hasVehicle()) {
-                if (this.equine.squaredDistanceTo(this.master) >= 144.0D) {
+            if (!this.entity.isLeashed() && !this.entity.hasVehicle()) {
+                if (this.entity.squaredDistanceTo(this.master) >= 144.0D) {
                     this.tryTeleport();
                 } else {
                     this.navigation.startMovingTo(this.master, this.speed);
@@ -103,7 +104,7 @@ public class ObeyMasterGoal extends Goal {
         } else if (!this.canTeleportTo(new BlockPos(x, y, z))) {
             return false;
         } else {
-            this.equine.refreshPositionAndAngles((double)x + 0.5D, (double)y, (double)z + 0.5D, this.equine.yaw, this.equine.pitch);
+            this.entity.refreshPositionAndAngles((double)x + 0.5D, y, (double)z + 0.5D, this.entity.bodyYaw, this.entity.getPitch());
             this.navigation.stop();
             return true;
         }
@@ -118,22 +119,22 @@ public class ObeyMasterGoal extends Goal {
             if (blockState.getBlock() instanceof LeavesBlock) {
                 return false;
             } else {
-                final BlockPos blockPos = pos.subtract(this.equine.getBlockPos());
-                return this.world.isSpaceEmpty(this.equine, this.equine.getBoundingBox().offset(blockPos));
+                final BlockPos blockPos = pos.subtract(this.entity.getBlockPos());
+                return this.world.isSpaceEmpty(this.entity, this.entity.getBoundingBox().offset(blockPos));
             }
         }
     }
 
     private Optional<Boolean> isStateRelevant() {
-        final IHorseBaseEntity.State state = ((IHorseBaseEntity)equine).getState();
-        if(state == IHorseBaseEntity.State.STANDING)
+        final IRidableEntity.State state = ((IRidableEntity) entity).getState();
+        if(state == IRidableEntity.State.STANDING)
             return Optional.of(true);
-        if(state != IHorseBaseEntity.State.FOLLOWING)
+        if(state != IRidableEntity.State.FOLLOWING)
             return Optional.of(false);
         return Optional.empty();
     }
 
     private int getRandomInt(int min, int max) {
-        return this.equine.getRandom().nextInt(max - min + 1) + min;
+        return this.entity.getRandom().nextInt(max - min + 1) + min;
     }
 }
