@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " EP",
+    " S ",
+    "S  "
+  ],
+  "key": {
+    "E": "minecraft:black_dye",
+    "P": "minecraft:rabbit_hide",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "id": "fidelity:whip_item",
+    "count": 1
+  }
+}

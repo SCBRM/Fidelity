@@ -1,11 +1,11 @@
 package org.scbrm.fidelity.bridge;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import net.minecraft.entity.LazyEntityReference;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.NbtCompound;
 
 public interface IRidableEntity {
     enum State {
@@ -30,23 +30,20 @@ public interface IRidableEntity {
         }
     }
 
-
-
     @Nullable
-    UUID getMasterUuid();
-    void setMasterUuid(@Nullable UUID uuid);
-
-    @Nullable
-    LivingEntity getMaster();
-    default void setMaster(@NotNull PlayerEntity player) { this.setMasterUuid(player.getUuid()); }
+    LazyEntityReference<LivingEntity> getMasterReference();
+    void setMasterReference(@Nullable LazyEntityReference<LivingEntity> masterReference);
 
     default boolean isMaster(LivingEntity entity) {
-        return entity == this.getMaster();
+        return entity == this.getMasterReference().resolve(entity.getWorld(), LivingEntity.class);
     }
 
     @NotNull
     State getState();
     void setState(@NotNull State state);
+
+    void readExtraCustomDataFromNbt(NbtCompound nbt);
+    void writeExtraCustomDataToNbt(NbtCompound nbt);
 
     boolean isTame();
 }
